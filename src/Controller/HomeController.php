@@ -17,12 +17,5 @@ class HomeController extends AbstractController
         ]);
     }
 
-    #[Route('/home/cart', name: 'cart')]
-    public function cart(): Response
-    {
-        return $this->render('home/cart.html.twig', [
-            'controller_name' => 'MainController',
-            'website_title' => 'Karma cart',
-        ]);
-    }
+
 }

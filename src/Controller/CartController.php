@@ -8,11 +8,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CartController extends AbstractController
 {
-    #[Route('/cart', name: 'app_cart')]
-    public function index(): Response
+    #[Route('/cart', name: 'cart')]
+    public function cart(): Response
     {
-        return $this->render('cart/index.html.twig', [
-            'controller_name' => 'CartController',
+        return $this->render('home/cart.html.twig', [
+            'controller_name' => 'MainController',
+            'website_title' => 'Karma cart',
         ]);
     }
 }
