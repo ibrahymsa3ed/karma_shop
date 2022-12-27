@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\OrdersRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: OrdersRepository::class)]
@@ -34,6 +35,9 @@ class Orders
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     private ?mobiles $mobile = null;
+
+    #[ORM\OneToMany(mappedBy: 'orders', targetEntity: OrdersProducts::class)]
+    private Collection $productOrdersProducts;
 
     public function getId(): ?int
     {

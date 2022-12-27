@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PricesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,6 +30,14 @@ class Prices
 
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $date_to = null;
+
+    #[ORM\OneToMany(mappedBy: 'price', targetEntity: OrdersProducts::class)]
+    private Collection $ordersProducts;
+
+    public function __construct()
+    {
+        $this->ordersProducts = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +100,36 @@ class Prices
     public function setDateTo(?\DateTimeInterface $date_to): self
     {
         $this->date_to = $date_to;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, OrdersProducts>
+     */
+    public function getOrdersProducts(): Collection
+    {
+        return $this->ordersProducts;
+    }
+
+    public function addOrdersProduct(OrdersProducts $ordersProduct): self
+    {
+        if (!$this->ordersProducts->contains($ordersProduct)) {
+            $this->ordersProducts->add($ordersProduct);
+            $ordersProduct->setPrice($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrdersProduct(OrdersProducts $ordersProduct): self
+    {
+        if ($this->ordersProducts->removeElement($ordersProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($ordersProduct->getPrice() === $this) {
+                $ordersProduct->setPrice(null);
+            }
+        }
 
         return $this;
     }

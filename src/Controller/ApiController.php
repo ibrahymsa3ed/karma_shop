@@ -3,38 +3,40 @@
 namespace App\Controller;
 
 use App\Entity\Categories;
-use App\Entity\Products;
 use App\Repository\CategoriesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Security;
-
-class CategoryController extends AbstractController
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+class ApiController extends AbstractController
 {
-    private $em;
-    // private $xeRepository;
-    private Security $security;
-    private CategoriesRepository $categoriesRepository;
-
+    private $serializer;
     public function __construct( CategoriesRepository $categoriesRepository, EntityManagerInterface $em)
     {
         $this->em = $em;
-        //$this->xeRepository = $xeRepository;
         $this->categoriesRepository = $categoriesRepository;
+        $encoders = [new XmlEncoder(), new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
+
+        $this->serializer = new Serializer($normalizers, $encoders);
     }
 
-    #[Route('/category', name: 'app_category')]
+    #[Route('/api', name: 'app_api')]
     public function index(): Response
     {
         $repository = $this->em->getRepository(Categories::class);
         $all_categories = $repository->findAll();//findBy(['user' => $this->security->getUser()->getEmail()]);
+        //dd($all_categories);
 
-        return $this->render('category/category.html.twig', [
-            'controller_name' => 'CategoryController',
+        $jsonContent = $this->serializer->serialize($all_categories, 'json');
+        return $this->render('api/index.html.twig', [
+            'controller_name' => 'ApiController',
             'website_title' => 'Karma category',
-            'all_categories' => $all_categories,
+            'categories_json' => $jsonContent,
         ]);
     }
 }

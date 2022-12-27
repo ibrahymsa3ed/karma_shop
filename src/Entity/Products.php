@@ -43,6 +43,9 @@ class Products
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: Orders::class)]
     private Collection $orders;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: OrdersProducts::class)]
+    private Collection $ordersOrdersProducts;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
